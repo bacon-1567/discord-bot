@@ -90,4 +90,4 @@ async def button(ctx):
     view = Button(ctx.author)  # ←ここで実行者を渡す
     await ctx.send("淫夢診断", view=view)
 
-bot.run('MTQ5MDA0NTQzNTgyNDMwODIzNA.G3LsdA.3sBJ8N92M9ySs_P3_4OCEhyJ9XiZbh9AmWcaIw')
+bot.run('TOKEN')
