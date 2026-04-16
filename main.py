@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-import os
 import random
+import os
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -99,6 +99,24 @@ async def on_message(message):
 
     if random.random() < 0.01:
         await message.channel.send("陰キャやんｗｗｗｗｗ🫵😂🫵😂🫵😂←陽キャたち")
+
+    await bot.process_commands(message)
+
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    if message.author.id == 1344954155353243650:
+        if random.random() < 0.2:
+            responses = [
+                "おまえちんこやんｗｗｗｗ😂😂😂😂",
+                "静かにしろ😡",
+                "くかぁ🫵😂🫵😂🫵😂",
+                "おい😂それはだめだろ🫵😂",
+                "お、おう😅😅😅😅"
+            ]
+            await message.channel.send(f"{message.author.mention} {random.choice(responses)}")
 
     await bot.process_commands(message)
 
