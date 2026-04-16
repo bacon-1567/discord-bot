@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import os
+import random
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -90,5 +91,15 @@ class Button(discord.ui.View):
 async def button(ctx):
     view = Button(ctx.author)  # ←ここで実行者を渡す
     await ctx.send("淫夢診断", view=view)
+
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    if random.random() < 0.1:  # 10%の確率
+        await message.channel.send("陰キャやんｗｗｗｗｗ🫵😂🫵😂🫵😂←陽キャたち")
+
+    await bot.process_commands(message)
 
 bot.run(os.environ["TOKEN"])
