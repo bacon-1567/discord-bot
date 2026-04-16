@@ -133,7 +133,7 @@ async def on_message(message):
             "お、おう",
             "あ、うん、",
             "なにいってん",
-            "は？"
+            "は？",
             "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF"
         ]
         sent = await message.channel.send(random.choice(responses))
@@ -160,7 +160,7 @@ async def on_message(message):
             "どうした",
             "ん？",
             "ちんこ！！",
-            "要件をいえ"
+            "要件をいえ",
             "https://youtu.be/yegBF2yoTDo?si=CJAbwRgAJqUVAj03"
         ]
         sent = await message.channel.send(random.choice(responses))
