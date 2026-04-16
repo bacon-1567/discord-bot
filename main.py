@@ -120,4 +120,31 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    # 🔹 最初の反応
+    words = ["にさちゃん", "とっきー", "にさいち", "ばこん","<@1490045435824308234>"]
+
+    if any(word in message.content for word in words):
+        responses = [
+            "お、おう",
+            "あ、うん、",
+            "なにいってん",
+            "は？"
+            "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF"
+        ]
+        sent = await message.channel.send(random.choice(responses))
+
+    # 🔹 Botのメッセージに返信したかチェック
+    if message.reference:  # 返信かどうか
+        replied_msg = await message.channel.fetch_message(message.reference.message_id)
+
+        if replied_msg.author == bot.user:
+            await message.channel.send("ところでパンツ見せて")
+
+    await bot.process_commands(message)
+
 bot.run(os.environ["TOKEN"])
