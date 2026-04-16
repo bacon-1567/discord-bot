@@ -126,7 +126,7 @@ async def on_message(message):
         return
 
     # 🔹 最初の反応
-    words = ["にさちゃん", "とっきー", "にさいち", "ばこん","<@1490045435824308234>"]
+    words = ["お、おう", "わたあめ", "殺す", "イク","<@1490045435824308234>"]
 
     if any(word in message.content for word in words):
         responses = [
@@ -146,5 +146,23 @@ async def on_message(message):
             await message.channel.send("ところでパンツ見せて")
 
     await bot.process_commands(message)
+
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    # 🔹 最初の反応
+    words = ["ばこん","バコン","997951321237893130"]
+
+    if any(word in message.content for word in words):
+        responses = [
+            "どうした",
+            "ん？",
+            "ちんこ！！",
+            "要件をいえ"
+            "https://youtu.be/yegBF2yoTDo?si=CJAbwRgAJqUVAj03"
+        ]
+        sent = await message.channel.send(random.choice(responses))
 
 bot.run(os.environ["TOKEN"])
