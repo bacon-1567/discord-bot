@@ -97,7 +97,7 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if random.random() < 0.1:  # 10%の確率
+    if random.random() < 1:  # 10%の確率
         await message.channel.send("陰キャやんｗｗｗｗｗ🫵😂🫵😂🫵😂←陽キャたち")
 
     await bot.process_commands(message)
