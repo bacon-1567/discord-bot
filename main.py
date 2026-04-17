@@ -122,8 +122,7 @@ async def on_message(message):
             "あ、うん、",
             "なにいってん",
             "は？",
-            "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF",
-            "https://www.youtube.com/@ABELLandATENE"
+            "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF"
         ]
         await message.channel.send(random.choice(responses))
 
@@ -148,5 +147,17 @@ async def on_message(message):
             await message.channel.send("ところでパンツ見せて")
 
     await bot.process_commands(message)
+
+    words3 = ["アベル", "アテネ", "あべる", "あてね"]
+
+    if any(word in message.content for word in words3):
+        responses = [
+            "どうした",
+            "ん？",
+            "ちんこ！！",
+            "要件をいえ",
+            "https://youtu.be/yegBF2yoTDo?si=CJAbwRgAJqUVAj03"
+        ]
+        await message.channel.send(random.choice(responses))
 
 bot.run(os.environ["TOKEN"])
