@@ -97,16 +97,11 @@ async def on_message(message):
     if message.author.bot:
         return
 
+    # 🔹 ランダム煽り
     if random.random() < 0.01:
         await message.channel.send("陰キャやんｗｗｗｗｗ🫵😂🫵😂🫵😂←陽キャたち")
 
-    await bot.process_commands(message)
-
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
-
+    # 🔹 特定ユーザー
     if message.author.id == 1344954155353243650:
         if random.random() < 0.2:
             responses = [
@@ -118,44 +113,24 @@ async def on_message(message):
             ]
             await message.channel.send(f"{message.author.mention} {random.choice(responses)}")
 
-    await bot.process_commands(message)
+    # 🔹 ワード反応①
+    words1 = ["お、おう", "わたあめ", "イク", "<@1490045435824308234>"]
 
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
-
-    # 🔹 最初の反応
-    words = ["お、おう", "わたあめ", "殺す", "イク","<@1490045435824308234>"]
-
-    if any(word in message.content for word in words):
+    if any(word in message.content for word in words1):
         responses = [
             "お、おう",
             "あ、うん、",
             "なにいってん",
             "は？",
-            "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF"
+            "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF",
+            "https://www.youtube.com/@ABELLandATENE"
         ]
-        sent = await message.channel.send(random.choice(responses))
+        await message.channel.send(random.choice(responses))
 
-    # 🔹 Botのメッセージに返信したかチェック
-    if message.reference:  # 返信かどうか
-        replied_msg = await message.channel.fetch_message(message.reference.message_id)
+    # 🔹 ワード反応②
+    words2 = ["ばこん", "バコン", "997951321237893130"]
 
-        if replied_msg.author == bot.user:
-            await message.channel.send("ところでパンツ見せて")
-
-    await bot.process_commands(message)
-
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
-
-    # 🔹 最初の反応
-    words = ["ばこん","バコン","997951321237893130"]
-
-    if any(word in message.content for word in words):
+    if any(word in message.content for word in words2):
         responses = [
             "どうした",
             "ん？",
@@ -163,6 +138,15 @@ async def on_message(message):
             "要件をいえ",
             "https://youtu.be/yegBF2yoTDo?si=CJAbwRgAJqUVAj03"
         ]
-        sent = await message.channel.send(random.choice(responses))
+        await message.channel.send(random.choice(responses))
+
+    # 🔹 Botに返信
+    if message.reference:
+        replied_msg = await message.channel.fetch_message(message.reference.message_id)
+
+        if replied_msg.author == bot.user:
+            await message.channel.send("ところでパンツ見せて")
+
+    await bot.process_commands(message)
 
 bot.run(os.environ["TOKEN"])
