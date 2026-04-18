@@ -120,13 +120,13 @@ async def on_message(message):
             "https://youtu.be/J5Z7tIq7bco"
         ]))
 
-    if any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
+    elif any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
         await message.channel.send(random.choice([
             "どうした","ん？","ちんこ！！","要件をいえ",
             "https://youtu.be/yegBF2yoTDo"
         ]))
 
-    if any(word in message.content for word in ["アベル","アテネ","あべる","あてね"]):
+    elif any(word in message.content for word in ["アベル","アテネ","あべる","あてね"]):
         await message.channel.send(random.choice([
             "https://www.youtube.com/@ABELLandATENE",
             "https://www.youtube.com/watch?v=zP7qRsknFxs",
@@ -135,31 +135,35 @@ async def on_message(message):
             "https://www.youtube.com/watch?v=I7HuIlFUx44"
         ]))
 
-if bot.user in message.mentions:
+    # 🔹 メンション＋返信処理（←ここ重要）
+    if bot.user in message.mentions:
 
-    # 🔹 返信してるかチェック
-    if message.reference:
-        replied_msg = message.reference.resolved
+        if message.reference:
+            replied_msg = message.reference.resolved
 
-        if replied_msg is None:
-            replied_msg = await message.channel.fetch_message(message.reference.message_id)
+            if replied_msg is None :    
+                try:
+                    replied_msg = await message.channel.fetch_message(message.reference.message_id)
+                except:
+                    replied_msg = None
 
-        if replied_msg:
-            content = replied_msg.content
+            if replied_msg:
+                content = replied_msg.content or "（内容なし）"
 
-            if "草" in content:
-                await message.channel.send("その言葉は『おもろい』って意味だよ😂")
-            elif "え？" in content:
-                await message.channel.send("それは『アスペルガー』か『緑手帳』って意味だな😏")
+                if "草" in content:
+                    await message.channel.send("その言葉は『おもろい』って意味だよ😂")
+                elif "え？" in content:
+                    await message.channel.send("それは『アスペルガー』か『緑手帳』って意味だな😏")
+                else:
+                    await message.channel.send(f"その言葉は対応してないから多分『{content}』だとおもうよ。ばこんもっとコマンド増やせよ無能がよ死んどけドブカスが")
+
             else:
-                await message.channel.send(f"その言葉は対応してないから多分『{content}』だとおもうよ。ばこんもっとコマンド増やせよ無能がよ死んどけドブカスが")
+                await message.channel.send("返信しろよダウン症😡")
+
         else:
-            await message.channel.send("返信先を送れ言語障害😡")
+            await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
 
-    else:
-        await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
-
-# 🔻 最後（←ここは左端）
-await bot.process_commands(message)
+    # 🔻 これ絶対最後
+    await bot.process_commands(message)
 
 bot.run(os.environ["TOKEN"])
