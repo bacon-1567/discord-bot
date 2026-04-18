@@ -137,11 +137,10 @@ async def on_message(message):
             "https://www.youtube.com/watch?v=I7HuIlFUx44"
         ]))
 
-    if message.reference and bot.user in message.mentions:
+if message.reference:
     replied_msg = message.reference.resolved
-
-    if replied_msg:
-        content = replied_msg.content
+   　　 if replied_msg:
+       　　　 content = replied_msg.content
 
         if "草" in content:
             await message.channel.send("その言葉は『おもろい』って意味だよ😂")
