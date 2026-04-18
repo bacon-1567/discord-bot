@@ -113,78 +113,47 @@ async def on_message(message):
             ]
             await message.channel.send(f"{message.author.mention} {random.choice(responses)}")
 
-    # 🔹 ワード反応①
-    words1 = ["お、おう", "わたあめ", "イク", "<@1490045435824308234>"]
-
-    if any(word in message.content for word in words1):
-        responses = [
-            "お、おう",
-            "あ、うん、",
-            "なにいってん",
-            "は？",
+    # 🔹 ワード反応
+    if any(word in message.content for word in ["お、おう","わたあめ","イク","<@1490045435824308234>"]):
+        await message.channel.send(random.choice([
+            "お、おう","あ、うん、","なにいってん","は？",
             "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF"
-        ]
-        await message.channel.send(random.choice(responses))
+        ]))
 
-    # 🔹 ワード反応②
-    words2 = ["ばこん", "バコン", "997951321237893130"]
-
-    if any(word in message.content for word in words2):
-        responses = [
-            "どうした",
-            "ん？",
-            "ちんこ！！",
-            "要件をいえ",
+    if any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
+        await message.channel.send(random.choice([
+            "どうした","ん？","ちんこ！！","要件をいえ",
             "https://youtu.be/yegBF2yoTDo?si=CJAbwRgAJqUVAj03"
-        ]
-        await message.channel.send(random.choice(responses))
+        ]))
 
-    # 🔹 ワード反応③（←これを上に移動）
-    words3 = ["アベル", "アテネ", "あべる", "あてね"]
-
-    if any(word in message.content for word in words3):
-        responses = [
+    if any(word in message.content for word in ["アベル","アテネ","あべる","あてね"]):
+        await message.channel.send(random.choice([
             "https://www.youtube.com/@ABELLandATENE",
-            "https://www.youtube.com/watch?v=zP7qRsknFxs&list=PL_qz5AubFuzo41hg31yZ5ZFBU4zusst5s",
-            "https://www.youtube.com/watch?v=zTCvaySiWYY&list=PL_qz5AubFuzrHXusl5JkQwrtXnOaZMFvM",
-            "https://www.youtube.com/watch?v=8DBRSuzHPxw&list=PL_qz5AubFuzquPYhOJs5c-rQxubYCelg1",
-            "https://www.youtube.com/watch?v=I7HuIlFUx44&list=PL_qz5AubFuzr0wHUlVf6oX3ar80D4QEZK"
-        ]
-        await message.channel.send(random.choice(responses))
+            "https://www.youtube.com/watch?v=zP7qRsknFxs",
+            "https://www.youtube.com/watch?v=zTCvaySiWYY",
+            "https://www.youtube.com/watch?v=8DBRSuzHPxw",
+            "https://www.youtube.com/watch?v=I7HuIlFUx44"
+        ]))
 
-    # 🔹 Botに返信
+    # 🔹 Bot返信判定
     if message.reference:
         replied_msg = await message.channel.fetch_message(message.reference.message_id)
 
+        # 普通の返信
         if replied_msg.author == bot.user:
             await message.channel.send("ところでパンツ見せて")
 
-    @bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
-
-    # 🔹 Botがメンションされてるか
-    if bot.user in message.mentions:
-
-        # 🔹 返信してるかチェック
-        if message.reference:
-            replied_msg = await message.channel.fetch_message(message.reference.message_id)
-
+        # メンション＋返信
+        if bot.user in message.mentions:
             content = replied_msg.content
 
-            # 🔹 内容に応じて返答
             if "草" in content:
                 await message.channel.send("その言葉は『おもろい』って意味だよ😂")
             elif "え？" in content:
-                await message.channel.send("それは『アスペルガー』か『緑手帳』って意味だな😏")
+                await message.channel.send("それは『よく分かってない』って意味だな😏")
             else:
-                await message.channel.send(f"その言葉はよく分からんけど『{content}』だよ。ばこんもっとコマンド増やせよ無能がよ死んどけカスが")
+                await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
 
-        else:
-            await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
-
-    # 🔻 これ絶対最後
     await bot.process_commands(message)
 
 bot.run(os.environ["TOKEN"])
