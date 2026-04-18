@@ -179,7 +179,7 @@ async def on_message(message):
             elif "え？" in content:
                 await message.channel.send("それは『アスペルガー』か『緑手帳』って意味だな😏")
             else:
-                await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
+                await message.channel.send(f"その言葉はよく分からんけど『{content}』だよ。ばこんもっとコマンド増やせよ無能がよ死んどけカスが")
 
         else:
             await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
