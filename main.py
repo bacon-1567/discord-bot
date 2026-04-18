@@ -114,7 +114,7 @@ async def on_message(message):
             await message.channel.send(f"{message.author.mention} {random.choice(responses)}")
 
     # 🔹 ワード反応
-    if any(word in message.content for word in ["お、おう","わたあめ","イク","<@1490045435824308234>"]):
+    if any(word in message.content for word in ["お、おう","わたあめ","イク","ほね"]):
         await message.channel.send(random.choice([
             "お、おう","あ、うん、","なにいってん","は？",
             "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF"
