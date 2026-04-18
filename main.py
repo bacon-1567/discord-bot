@@ -139,6 +139,19 @@ async def on_message(message):
         ]
         await message.channel.send(random.choice(responses))
 
+    # 🔹 ワード反応③（←これを上に移動）
+    words3 = ["アベル", "アテネ", "あべる", "あてね"]
+
+    if any(word in message.content for word in words3):
+        responses = [
+            "https://www.youtube.com/@ABELLandATENE",
+            "https://www.youtube.com/watch?v=zP7qRsknFxs&list=PL_qz5AubFuzo41hg31yZ5ZFBU4zusst5s",
+            "https://www.youtube.com/watch?v=zTCvaySiWYY&list=PL_qz5AubFuzrHXusl5JkQwrtXnOaZMFvM",
+            "https://www.youtube.com/watch?v=8DBRSuzHPxw&list=PL_qz5AubFuzquPYhOJs5c-rQxubYCelg1",
+            "https://www.youtube.com/watch?v=I7HuIlFUx44&list=PL_qz5AubFuzr0wHUlVf6oX3ar80D4QEZK"
+        ]
+        await message.channel.send(random.choice(responses))
+
     # 🔹 Botに返信
     if message.reference:
         replied_msg = await message.channel.fetch_message(message.reference.message_id)
@@ -146,18 +159,7 @@ async def on_message(message):
         if replied_msg.author == bot.user:
             await message.channel.send("ところでパンツ見せて")
 
+    # 🔻 これ絶対最後
     await bot.process_commands(message)
-
-    words3 = ["アベル", "アテネ", "あべる", "あてね"]
-
-    if any(word in message.content for word in words3):
-        responses = [
-            "どうした",
-            "ん？",
-            "ちんこ！！",
-            "要件をいえ",
-            "https://youtu.be/yegBF2yoTDo?si=CJAbwRgAJqUVAj03"
-        ]
-        await message.channel.send(random.choice(responses))
 
 bot.run(os.environ["TOKEN"])
