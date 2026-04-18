@@ -137,20 +137,18 @@ async def on_message(message):
             "https://www.youtube.com/watch?v=I7HuIlFUx44"
         ]))
 
-    # 🔹 返信処理（ここが重要）
-    if message.reference:
-        replied_msg = message.reference.resolved
+    if message.reference and bot.user in message.mentions:
+    replied_msg = message.reference.resolved
 
-            # メンション＋返信
-            elif bot.user in message.mentions:
-                content = replied_msg.content
+    if replied_msg:
+        content = replied_msg.content
 
-                if "草" in content:
-                    await message.channel.send("その言葉は『おもろい』って意味だよ😂")
-                elif "え？" in content:
-                    await message.channel.send("それは『よく分かってない』って意味だな😏")
-                else:
-                    await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
+        if "草" in content:
+            await message.channel.send("その言葉は『おもろい』って意味だよ😂")
+        elif "え？" in content:
+            await message.channel.send("それは『よく分かってない』って意味だな😏")
+        else:
+            await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
 
     # 🔻 最後は絶対これ
     await bot.process_commands(message)
