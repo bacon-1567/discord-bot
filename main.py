@@ -135,8 +135,10 @@ async def on_message(message):
             "https://www.youtube.com/watch?v=I7HuIlFUx44"
         ]))
 
-    # 🔹 メンション＋返信
-    if message.reference and bot.user in message.mentions:
+    if bot.user in message.mentions:
+
+    # 🔹 返信してるかチェック
+    if message.reference:
         replied_msg = message.reference.resolved
 
         if replied_msg is None:
@@ -148,11 +150,15 @@ async def on_message(message):
             if "草" in content:
                 await message.channel.send("その言葉は『おもろい』って意味だよ😂")
             elif "え？" in content:
-                await message.channel.send("それは『よく分かってない』って意味だな😏")
+                await message.channel.send("それは『アスペルガー』か『緑手帳』って意味だな😏")
             else:
-                await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
+                await message.channel.send(f"その言葉は対応してないから多分『{content}』だとおもうよ。ばこんもっとコマンド増やせよ無能がよ死んどけドブカスが")
         else:
-            await message.channel.send("誰に対してだよ。日本語不自由？😡")
+            await message.channel.send("返信先が取得できないぞ😡")
+
+    # 🔻 返信してない場合
+    else:
+        await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
 
     # 🔻 最後
     await bot.process_commands(message)
