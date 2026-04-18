@@ -135,7 +135,7 @@ async def on_message(message):
             "https://www.youtube.com/watch?v=I7HuIlFUx44"
         ]))
 
-    if bot.user in message.mentions:
+if bot.user in message.mentions:
 
     # 🔹 返信してるかチェック
     if message.reference:
@@ -154,13 +154,12 @@ async def on_message(message):
             else:
                 await message.channel.send(f"その言葉は対応してないから多分『{content}』だとおもうよ。ばこんもっとコマンド増やせよ無能がよ死んどけドブカスが")
         else:
-            await message.channel.send("返信先が取得できないぞ😡")
+            await message.channel.send("返信先を送れ言語障害😡")
 
-    # 🔻 返信してない場合
     else:
         await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
 
-    # 🔻 最後
-    await bot.process_commands(message)
+# 🔻 最後（←ここは左端）
+await bot.process_commands(message)
 
 bot.run(os.environ["TOKEN"])
