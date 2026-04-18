@@ -11,7 +11,7 @@ bot.remove_command("help")
 @bot.event
 async def on_ready():
     print("ログインしました！")
-    await bot.change_presence(activity=discord.Game(name="てすとちゅー"))
+    await bot.change_presence(activity=discord.Game(name="祝V1.0beta"))
 
 @bot.command()
 async def ping(ctx):
@@ -113,20 +113,22 @@ async def on_message(message):
             ]
             await message.channel.send(f"{message.author.mention} {random.choice(responses)}")
 
-    # 🔹 ワード反応
+    # 🔹 ワード反応①
     if any(word in message.content for word in ["お、おう","わたあめ","イク","ほね"]):
         await message.channel.send(random.choice([
             "お、おう","あ、うん、","なにいってん","は？",
-            "https://youtu.be/J5Z7tIq7bco?si=-xNHR18ELy-nGoxF"
+            "https://youtu.be/J5Z7tIq7bco"
         ]))
 
-    if any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
+    # 🔹 ワード反応②
+    elif any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
         await message.channel.send(random.choice([
             "どうした","ん？","ちんこ！！","要件をいえ",
-            "https://youtu.be/yegBF2yoTDo?si=CJAbwRgAJqUVAj03"
+            "https://youtu.be/yegBF2yoTDo"
         ]))
 
-    if any(word in message.content for word in ["アベル","アテネ","あべる","あてね"]):
+    # 🔹 ワード反応③
+    elif any(word in message.content for word in ["アベル","アテネ","あべる","あてね"]):
         await message.channel.send(random.choice([
             "https://www.youtube.com/@ABELLandATENE",
             "https://www.youtube.com/watch?v=zP7qRsknFxs",
@@ -135,16 +137,27 @@ async def on_message(message):
             "https://www.youtube.com/watch?v=I7HuIlFUx44"
         ]))
 
-        elif bot.user in message.mentions:
-            content = replied_msg.content
+    # 🔹 返信処理（ここが重要）
+    if message.reference:
+        replied_msg = message.reference.resolved
 
-            if "草" in content:
-                await message.channel.send("その言葉は『おもろい』って意味だよ😂")
-            elif "え？" in content:
-                await message.channel.send("それは『よく分かってない』って意味だな😏")
-            else:
-                await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
+        if replied_msg:
+            # Botに返信されたとき
+            if replied_msg.author == bot.user:
+                await message.channel.send("ところでパンツ見せて")
 
+            # メンション＋返信
+            elif bot.user in message.mentions:
+                content = replied_msg.content
+
+                if "草" in content:
+                    await message.channel.send("その言葉は『おもろい』って意味だよ😂")
+                elif "え？" in content:
+                    await message.channel.send("それは『よく分かってない』って意味だな😏")
+                else:
+                    await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
+
+    # 🔻 最後は絶対これ
     await bot.process_commands(message)
 
 bot.run(os.environ["TOKEN"])
