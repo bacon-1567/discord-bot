@@ -139,15 +139,20 @@ async def on_message(message):
 
 if message.reference:
     replied_msg = message.reference.resolved
-   　　 if replied_msg:
-       　　　 content = replied_msg.content
+
+    if replied_msg:
+        content = replied_msg.content
 
         if "草" in content:
             await message.channel.send("その言葉は『おもろい』って意味だよ😂")
         elif "え？" in content:
-            await message.channel.send("それは『よく分かってない』って意味だな😏")
+            await message.channel.send("それは『アスペルガー』か『緑手帳』って意味だな😏")
         else:
-            await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
+            await message.channel.send(f"その言葉はよく分からんけど『{content}』だよ。ばこんもっとコマンド増やせよ無能がよ死んどけドブカスが")
+            
+    else:
+        await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
+
 
     # 🔻 最後は絶対これ
     await bot.process_commands(message)
