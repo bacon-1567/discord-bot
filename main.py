@@ -141,11 +141,6 @@ async def on_message(message):
     if message.reference:
         replied_msg = message.reference.resolved
 
-        if replied_msg:
-            # Botに返信されたとき
-            if replied_msg.author == bot.user:
-                await message.channel.send("ところでパンツ見せて")
-
             # メンション＋返信
             elif bot.user in message.mentions:
                 content = replied_msg.content
