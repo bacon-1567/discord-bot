@@ -143,20 +143,20 @@ if message.reference and bot.user in message.mentions:
     if replied_msg is None:
         replied_msg = await message.channel.fetch_message(message.reference.message_id)
 
-    content = replied_msg.content
+    if replied_msg:
+        content = replied_msg.content
 
         if "草" in content:
             await message.channel.send("その言葉は『おもろい』って意味だよ😂")
         elif "え？" in content:
-            await message.channel.send("それは『アスペルガー』か『緑手帳』って意味だな😏")
+            await message.channel.send("それは『よく分かってない』って意味だな😏")
         else:
-            await message.channel.send(f"その言葉はよく分からんけど『{content}』だよ。ばこんもっとコマンド増やせよ無能がよ死んどけドブカスが")
-            
+            await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
+
     else:
         await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
 
-
-    # 🔻 最後は絶対これ
-    await bot.process_commands(message)
+# 🔻 最後は絶対これ
+await bot.process_commands(message)
 
 bot.run(os.environ["TOKEN"])
