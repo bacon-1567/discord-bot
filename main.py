@@ -159,6 +159,31 @@ async def on_message(message):
         if replied_msg.author == bot.user:
             await message.channel.send("ところでパンツ見せて")
 
+    @bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    # 🔹 Botがメンションされてるか
+    if bot.user in message.mentions:
+
+        # 🔹 返信してるかチェック
+        if message.reference:
+            replied_msg = await message.channel.fetch_message(message.reference.message_id)
+
+            content = replied_msg.content
+
+            # 🔹 内容に応じて返答
+            if "草" in content:
+                await message.channel.send("その言葉は『おもろい』って意味だよ😂")
+            elif "え？" in content:
+                await message.channel.send("それは『アスペルガー』か『緑手帳』って意味だな😏")
+            else:
+                await message.channel.send(f"その言葉はよく分からんけど『{content}』だな😅")
+
+        else:
+            await message.channel.send("誰に対してだよ。日本語不自由？とっきーかよ😡")
+
     # 🔻 これ絶対最後
     await bot.process_commands(message)
 
