@@ -123,7 +123,7 @@ async def on_message(message):
     elif any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
         await message.channel.send(random.choice([
             "どうした","ん？","要件をいえ",
-            "https://imgur.com/a/EucwyJl#LGfABnO"
+            "えろ"
         ]))
 
     elif any(word in message.content for word in ["アベル","アテネ","あべる","あてね"]):
