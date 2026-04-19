@@ -159,7 +159,7 @@ async def on_message(message):
         ]))
 
     # 投票トリガー
-    if any(word in message.content for word in ["69","スカトロ","児ポ","腸内洗浄"):
+    if any(word in message.content for word in ["69","スカトロ","児ポ","腸内洗浄"]):
         msg = await message.channel.send("投票開始…")
         view = VoteView(message.author, msg)
 
