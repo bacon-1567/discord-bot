@@ -2,96 +2,119 @@ import discord
 from discord.ext import commands
 import random
 import os
+import asyncio
 
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 bot.remove_command("help")
 
+TARGET_ROLE_ID = 1495420804819845301  # ←ロールID
+
+# =========================
+# 起動
+# =========================
 @bot.event
 async def on_ready():
     print("ログインしました！")
-    await bot.change_presence(activity=discord.Game(name="V1.0alpha"))
+    await bot.change_presence(activity=discord.Game(name="V1.0"))
 
-@bot.command()
-async def ping(ctx):
-    raw_ping = bot.latency
-    ping = round(raw_ping * 1000)
-    await ctx.reply(f"しかたねぇな\nBotのPing値は{ping}msやカス🫵😒")
+# =========================
+# 投票View
+# =========================
+class VoteView(discord.ui.View):
+    def __init__(self, target_user, message):
+        super().__init__(timeout=60)
+        self.target_user = target_user
+        self.message = message
 
-@bot.command()
-async def このサーバーの情報を教えろカス(ctx):
-  guild = ctx.message.guild
-  roles =[role for role in guild.roles]
-  text_channels = [text_channels for text_channels in guild.text_channels]
-  embed = discord.Embed(title=f"{guild.name}info",color=0x3683ff)
-  embed.add_field(name="管理者",value=f"{ctx.guild.owner}",inline=False)
-  embed.add_field(name="ID",value=f"{ctx.guild.id}",inline=False)
-  embed.add_field(name="チャンネル数",value=f"{len(text_channels)}",inline=False)
-  embed.add_field(name="ロール数",value=f"{len(roles)}",inline=False)
-  embed.add_field(name="サーバーブースター",value=f"{guild.premium_subscription_count}",inline=False)
-  embed.add_field(name="メンバー数",value=f"{guild.member_count}",inline=False)
-  embed.add_field(name="サーバー設立日",value=f"{guild.created_at}",inline=False)
-  embed.set_footer(text=f"実行者 : {ctx.author} ")
-  await ctx.send(embed=embed)
+        self.yes = 0
+        self.no = 0
+        self.voters = set()
 
-@bot.command()
-async def 自分情報(ctx):
-  embed = discord.Embed(title=f"user {ctx.author.name}",description="これがおめぇの情報だカス🫵😒",color=0x3683ff)
-  embed.add_field(name="名前",value=f"{ctx.author.mention}",inline=False)
-  embed.add_field(name="ID",value=f"{ctx.author.id}",inline=False)
-  embed.add_field(name="ACTIVITY",value=f"{ctx.author.activity}",inline=False)
-  embed.add_field(name="TOP_ROLE",value=f"{ctx.author.top_role}",inline=False)
-  embed.add_field(name="discriminator",value=f"#{ctx.author.discriminator}",inline=False)
-  embed.add_field(name="サーバー参加",value=f"{ctx.author.joined_at.strftime('%d.%m.%Y, %H:%M Uhr')}",inline=False)
-  embed.add_field(name="アカウント作成",value=f"{ctx.author.created_at.strftime('%d.%m.%Y, %H:%M Uhr')}",inline=False)
-  embed.set_thumbnail(url=f"{ctx.author.avatar.url}")
-  embed.set_footer(text=f"実行者 : {ctx.author} ")
-  await ctx.send(embed=embed)
+    def make_bar(self):
+        total = self.yes + self.no
+        if total == 0:
+            return "⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜"
 
-class Button(discord.ui.View):
-    def __init__(self, author):
-        super().__init__()
-        self.author = author  # コマンド実行者を保存
+        ratio = self.yes / total
+        filled = int(ratio * 10)
+        return "🟩" * filled + "⬜" * (10 - filled)
 
-    async def disable_all_buttons(self):
+    def update_labels(self):
+        self.yes_button.label = f"はい ({self.yes})"
+        self.no_button.label = f"いいえ ({self.no})"
+
+    async def update_message(self, interaction):
+        self.update_labels()
+        bar = self.make_bar()
+
+        content = (
+            f"{self.target_user.mention} に汚い名誉を与えますか？\n"
+            f"{bar}\n"
+            f"はい: {self.yes} / いいえ: {self.no}"
+        )
+
+        await interaction.response.edit_message(content=content, view=self)
+
+    @discord.ui.button(label="はい (0)", style=discord.ButtonStyle.green)
+    async def yes_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+
+        if interaction.user.id in self.voters:
+            await interaction.response.send_message("どんだけ嫌ってるんｗｗｗ", ephemeral=True)
+            return
+
+        self.voters.add(interaction.user.id)
+        self.yes += 1
+        await self.update_message(interaction)
+
+    @discord.ui.button(label="いいえ (0)", style=discord.ButtonStyle.red)
+    async def no_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+
+        if interaction.user.id in self.voters:
+            await interaction.response.send_message("どんだけ嫌ってるんｗｗｗ", ephemeral=True)
+            return
+
+        self.voters.add(interaction.user.id)
+        self.no += 1
+        await self.update_message(interaction)
+
+    async def on_timeout(self):
         for item in self.children:
             item.disabled = True
 
-    async def handle_interaction(self, interaction, message):
-        # 押せる人を制限
-        if interaction.user != self.author:
-            await interaction.response.send_message("あなたは押せません", ephemeral=True)
-            return
+        bar = self.make_bar()
 
-        # ボタン無効化
-        await self.disable_all_buttons()
+        result_text = (
+            f"投票終了！\n"
+            f"{bar}\n"
+            f"はい: {self.yes} / いいえ: {self.no}"
+        )
 
-        # メッセージ更新（これが重要）
-        await interaction.response.edit_message(content=message, view=self)
+        await self.message.edit(content=result_text, view=self)
 
-    @discord.ui.button(label="すぴきでるじばぜよ", style=discord.ButtonStyle.grey)
-    async def button1(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.handle_interaction(interaction, "ｳﾜｧ!ﾊﾞｺﾝﾃﾞﾙｼﾞﾊﾞｾﾞﾖ!!")
+        guild = self.target_user.guild
+        role = guild.get_role(TARGET_ROLE_ID)
 
-    @discord.ui.button(label="アイスティー", style=discord.ButtonStyle.blurple)
-    async def button2(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.handle_interaction(interaction, "淫夢でくさなんよww🫵😂")
+        await self.message.channel.send(
+            f"📊 投票結果\n対象: {self.target_user.mention}\nはい: {self.yes}\nいいえ: {self.no}"
+        )
 
-    @discord.ui.button(label="１１４５１４", style=discord.ButtonStyle.green)
-    async def button3(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.handle_interaction(interaction, "淫夢でくさなんよww🫵😂")
+        if self.yes > self.no:
+            await self.target_user.add_roles(role)
+            await self.message.channel.send(
+                f"{self.target_user.mention} に汚い名誉を与えたよ！（24時間後に削除）"
+            )
 
-    @discord.ui.button(label="８１０", style=discord.ButtonStyle.red)
-    async def button4(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.handle_interaction(interaction, "淫夢でくさなんよww🫵😂")
+            await asyncio.sleep(86400)
+            await self.target_user.remove_roles(role)
 
+        else:
+            await self.message.channel.send("ロールは付与されなかった。しょうもな")
 
-@bot.command()
-async def button(ctx):
-    view = Button(ctx.author)  # ←ここで実行者を渡す
-    await ctx.send("淫夢診断", view=view)
-
+# =========================
+# メッセージ処理
+# =========================
 @bot.event
 async def on_message(message):
     if message.author.bot:
@@ -135,7 +158,18 @@ async def on_message(message):
             "https://www.youtube.com/watch?v=I7HuIlFUx44"
         ]))
 
-    # 🔻 これ絶対最後
+    # 投票トリガー
+    if any(word in message.content for word in ["かわいい","最低"]):
+        msg = await message.channel.send("投票開始…")
+        view = VoteView(message.author, msg)
+
+        await msg.edit(
+            content=f"{message.author.mention} にロールを付けますか？（1人1票・60秒）",
+            view=view
+        )
+
+    # コマンド処理（必ず最後）
     await bot.process_commands(message)
 
+# =========================
 bot.run(os.environ["TOKEN"])
