@@ -6,10 +6,14 @@ import asyncio
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True      # ←必須
+intents.presences = True    # ←これないとSpotify無理
 bot = commands.Bot(command_prefix='!', intents=intents)
 bot.remove_command("help")
 
 TARGET_ROLE_ID = 1495420804819845301  # ←ロールID
+
+SPOTIFY_ROLE_ID = 1493255008807026748
 
 # =========================
 # 起動
@@ -17,7 +21,7 @@ TARGET_ROLE_ID = 1495420804819845301  # ←ロールID
 @bot.event
 async def on_ready():
     print("ログインしました！")
-    await bot.change_presence(activity=discord.Game(name="V1.0"))
+    await bot.change_presence(activity=discord.Game(name="V1.1"))
 
 # =========================
 # 投票View
@@ -72,7 +76,7 @@ class VoteView(discord.ui.View):
     async def no_button(self, interaction: discord.Interaction, button: discord.ui.Button):
 
         if interaction.user.id in self.voters:
-            await interaction.response.send_message("どんだけ嫌ってるんｗｗｗ", ephemeral=True)
+            await interaction.response.send_message("善人ぶるなよｗｗｗ", ephemeral=True)
             return
 
         self.voters.add(interaction.user.id)
@@ -112,6 +116,39 @@ class VoteView(discord.ui.View):
         else:
             await self.message.channel.send("ロールは付与されなかった。しょうもな")
 
+@bot.command()
+async def spotify(ctx):
+    embed = discord.Embed(title="🎧 Spotify再生中", color=0x1DB954)
+
+    found = False
+
+    for member in ctx.guild.members:
+
+        if not any(role.id == SPOTIFY_ROLE_ID for role in member.roles):
+            continue
+
+        if not member.activities:
+            continue
+
+        for activity in member.activities:
+            if isinstance(activity, discord.Spotify):
+                found = True
+
+                embed.add_field(
+                    name=f"🎧 {member.name}",
+                    value=(
+                        f"**曲名:** {activity.title}\n"
+                        f"**アーティスト:** {', '.join(activity.artists)}\n"
+                        f"**アルバム:** {activity.album}"
+                    ),
+                    inline=False
+                )
+
+    if not found:
+        await ctx.send("ばこんはなんもきいてないよ😅")
+    else:
+        await ctx.send(embed=embed)
+
 # =========================
 # メッセージ処理
 # =========================
@@ -126,7 +163,7 @@ async def on_message(message):
 
     # 🔹 特定ユーザー
     if message.author.id == 1344954155353243650:
-        if random.random() < 0.1:
+        if random.random() < 0.05:
             responses = [
                 "おまえちんこやんｗｗｗｗ😂😂😂😂",
                 "静かにしろ😡",
@@ -159,12 +196,12 @@ async def on_message(message):
         ]))
 
     # 投票トリガー
-    if any(word in message.content for word in ["69","スカトロ","児ポ","腸内洗浄"]):
+    if any(word in message.content for word in ["スカトロ","児ポ","腸内洗浄"]):
         msg = await message.channel.send("投票開始…")
         view = VoteView(message.author, msg)
 
         await msg.edit(
-            content=f"{message.author.mention} にロールを付けますか？（1人1票・60秒）",
+            content=f"{message.author.mention} に汚名誉を付けますか？（1人1票・60秒）",
             view=view
         )
 
