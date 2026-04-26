@@ -21,7 +21,7 @@ SPOTIFY_ROLE_ID = 1493255008807026748
 @bot.event
 async def on_ready():
     print("ログインしました！")
-    await bot.change_presence(activity=discord.Game(name="V1.3"))
+    await bot.change_presence(activity=discord.Game(name="V1.25"))
 
 # =========================
 # 投票View
@@ -116,39 +116,6 @@ class VoteView(discord.ui.View):
         else:
             await self.message.channel.send("ロールは付与されなかった。しょうもな")
 
-@bot.command()
-async def spotify(ctx):
-    embed = discord.Embed(title="🎧 Spotify再生中", color=0x1DB954)
-
-    found = False
-
-    for member in ctx.guild.members:
-
-        if not any(role.id == SPOTIFY_ROLE_ID for role in member.roles):
-            continue
-
-        if not member.activities:
-            continue
-
-        for activity in member.activities:
-            if isinstance(activity, discord.Spotify):
-                found = True
-
-                embed.add_field(
-                    name=f"🎧 {member.name}",
-                    value=(
-                        f"**曲名:** {activity.title}\n"
-                        f"**アーティスト:** {', '.join(activity.artists)}\n"
-                        f"**アルバム:** {activity.album}"
-                    ),
-                    inline=False
-                )
-
-    if not found:
-        await ctx.send("誰も聴いてない😅")
-    else:
-        await ctx.send(embed=embed)
-
 # =========================
 # メッセージ処理
 # =========================
@@ -211,6 +178,9 @@ games = {}
 
 @bot.command()
 async def core(ctx):
+    if ctx.author.id in games:
+        return await ctx.send("すでに実験中だぞ")
+
     games[ctx.author.id] = {
         "danger": 0,
         "turn": 0
@@ -219,7 +189,7 @@ async def core(ctx):
     view = CoreView(ctx.author)
 
     await ctx.send(
-        "☢️ 日本への核爆弾を投下するために核爆弾を作ろう！！\nボタンで操作しろ\n🙂 安定\n危険度: 0% / ターン: 0",
+        "☢️ 実験開始！\nボタンで操作しろ\n🙂 安定\n危険度: 0% / ターン: 0",
         view=view
     )
 
@@ -243,78 +213,82 @@ class CoreView(discord.ui.View):
 
         return f"{state}\n☢️ 危険度: {g['danger']}% / ターン: {g['turn']}"
 
-async def process(self, interaction, change):
-    if interaction.user != self.user:
-        return await interaction.response.send_message("お前の実験じゃない", ephemeral=True)
+    async def process(self, interaction, change):
+        if interaction.user != self.user:
+            return await interaction.response.send_message("お前の実験じゃない", ephemeral=True)
 
-    g = games.get(self.user.id)
-    if not g:
-        return await interaction.response.send_message("ゲーム終わってる", ephemeral=True)
+        g = games.get(self.user.id)
+        if not g:
+            return await interaction.response.send_message("ゲーム終わってる", ephemeral=True)
 
-    # 🔥 ターンによる難易度上昇
-    difficulty = 1 + (g["turn"] // 5)  # 0〜4ターン=1倍, 5〜9=2倍, 10〜=3倍
+        # 🔥 難易度スケーリング
+        difficulty = 1 + (g["turn"] // 5)
 
-    # 危険度変動
-    if isinstance(change, tuple):
-        g["danger"] = max(0, g["danger"] - random.randint(*change))
-    else:
-        g["danger"] = max(0, g["danger"] + change * difficulty)
+        if isinstance(change, tuple):
+            g["danger"] = max(0, g["danger"] - random.randint(*change))
+        else:
+            g["danger"] = max(0, g["danger"] + change * difficulty)
 
-    g["turn"] += 1
+        g["turn"] += 1
 
-    # 💀 クリティカル事故（強化）
-    if random.random() < 0.08:  # 8%にアップ
+        # 💀 事故
+        if random.random() < 0.08:
+            await interaction.response.edit_message(
+                content=f"💀  あなたは今朝素手でトマトスパゲティを食べたことを忘れて、ドライバーを滑らせ、落とした瞬間、部屋に眩い綺麗な青色と共に致死量の放射能を浴びた\nターン: {g['turn']}",
+                view=None
+            )
+            del games[self.user.id]
+            return
+
+        # 💥 ゲームオーバー
+        if g["danger"] >= 100:
+            await interaction.response.edit_message(
+                content=f"💥 あなたはチキンすぎてドライバーを限界まで低くした結果ベリリウム反射材が接近し、部屋に眩い綺麗な青色と共に致死量の放射能を浴びた\nターン: {g['turn']}",
+                view=None
+            )
+            del games[self.user.id]
+            return
+
+        # 🎉 クリア
+        if g["turn"] >= 15:
+            await interaction.response.edit_message(
+                content=f"🎉 あなたは核爆弾「オレオットセイ」を作り上げたことにより生涯使い切れないほどの金と名誉を手に入れた！\n危険度: {g['danger']}%\nターン: {g['turn']}",
+                view=None
+            )
+            del games[self.user.id]
+            return
+
         await interaction.response.edit_message(
-            content=f"💀 助手がうんこを漏らしてしまって、あなたはその悪臭に耐え切れずしんだ\nターン: {g['turn']}",
-            view=None
+            content=self.get_status(),
+            view=self
         )
-        del games[self.user.id]
-        return
-
-    # 💥 ゲームオーバー
-    if g["danger"] >= 100:
-        await interaction.response.edit_message(
-            content=f"💥 あなたは今朝素手でトマトスパゲティを食べたことを忘れて、ドライバーを滑らせ、落とした瞬間、部屋に眩い綺麗な青色と共に致死量の放射能を浴びた\nターン: {g['turn']}",
-            view=None
-        )
-        del games[self.user.id]
-        return
-
-    # 🎉 クリア判定（追加）
-    if g["turn"] >= 15:
-        await interaction.response.edit_message(
-            content=f"🎉 あなたは核爆弾「オレオットセイ」を作り上げたことにより生涯使い切れないほどの金と名誉を手に入れた！\n危険度: {g['danger']}%\nターン: {g['turn']}",
-            view=None
-        )
-        del games[self.user.id]
-        return
-
-    await interaction.response.edit_message(
-        content=self.get_status(),
-        view=self
-    )
 
     @discord.ui.button(label="安定", style=discord.ButtonStyle.green)
     async def stable(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.process(interaction, -15)
+        await self.process(interaction, -5)
 
     @discord.ui.button(label="観測", style=discord.ButtonStyle.blurple)
     async def observe(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.process(interaction, +10)
+        await self.process(interaction, +15)
 
     @discord.ui.button(label="テスト", style=discord.ButtonStyle.red)
     async def test(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.process(interaction, +25)
+        await self.process(interaction, +30)
 
     @discord.ui.button(label="冷却", style=discord.ButtonStyle.gray)
     async def cool(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await self.process(interaction, (10, 30))
-
+        await self.process(interaction, (-10, 30))
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
 
         if self.user.id in games:
             del games[self.user.id]
+
+        # メッセージ更新（重要）
+        try:
+            await self.message.edit(content="⌛ 時間切れで実験終了", view=self)
+        except:
+            pass
 
 bot.run(os.environ["TOKEN"])
