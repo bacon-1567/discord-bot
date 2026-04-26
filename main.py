@@ -264,11 +264,11 @@ class CoreView(discord.ui.View):
 
     @discord.ui.button(label="安定", style=discord.ButtonStyle.green)
     async def stable(self, interaction, button):
-        await self.process(interaction, -10, 10)
+        await self.process(interaction, (-10, 10))
 
     @discord.ui.button(label="観測", style=discord.ButtonStyle.blurple)
     async def observe(self, interaction, button):
-        await self.process(interaction, -5, 5)
+        await self.process(interaction, (-5, 5))
 
     @discord.ui.button(label="テスト", style=discord.ButtonStyle.red)
     async def test(self, interaction, button):
