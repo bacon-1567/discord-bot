@@ -21,7 +21,7 @@ SPOTIFY_ROLE_ID = 1493255008807026748
 @bot.event
 async def on_ready():
     print("ログインしました！")
-    await bot.change_presence(activity=discord.Game(name="V1.1"))
+    await bot.change_presence(activity=discord.Game(name="V1.2"))
 
 # =========================
 # 投票View
@@ -76,7 +76,7 @@ class VoteView(discord.ui.View):
     async def no_button(self, interaction: discord.Interaction, button: discord.ui.Button):
 
         if interaction.user.id in self.voters:
-            await interaction.response.send_message("善人ぶるなよｗｗｗ", ephemeral=True)
+            await interaction.response.send_message("どんだけ嫌ってるんｗｗｗ", ephemeral=True)
             return
 
         self.voters.add(interaction.user.id)
@@ -145,7 +145,7 @@ async def spotify(ctx):
                 )
 
     if not found:
-        await ctx.send("ばこんはなんもきいてないよ😅")
+        await ctx.send("誰も聴いてない😅")
     else:
         await ctx.send(embed=embed)
 
@@ -163,7 +163,7 @@ async def on_message(message):
 
     # 🔹 特定ユーザー
     if message.author.id == 1344954155353243650:
-        if random.random() < 0.05:
+        if random.random() < 0.1:
             responses = [
                 "おまえちんこやんｗｗｗｗ😂😂😂😂",
                 "静かにしろ😡",
@@ -207,6 +207,44 @@ async def on_message(message):
 
     # コマンド処理（必ず最後）
     await bot.process_commands(message)
+
+games = {}
+
+@bot.command()
+async def core(ctx):
+    games[ctx.author.id] = {
+        "danger": 0,
+        "turn": 0
+    }
+    await ctx.send("ばかが死ぬ実験をしたよ！\n危険度: 0%")
+
+@bot.command()
+async def action(ctx, act):
+    if ctx.author.id not in games:
+        return await ctx.send("先に !core しろ")
+
+    g = games[ctx.author.id]
+
+    if act == "安定":
+        g["danger"] = max(0, g["danger"] - 15)
+    elif act == "観測":
+        g["danger"] += 10
+    elif act == "テスト":
+        g["danger"] += 25
+    elif act == "冷却":
+        g["danger"] = max(0, g["danger"] - random.randint(10, 30))
+    else:
+        return await ctx.send("コマンド: 安定 / 観測 / テスト / 冷却")
+
+    g["turn"] += 1
+
+    # 💥 ゲームオーバー
+    if g["danger"] >= 100:
+        await ctx.send(f"💥 目が白く濁り、まともに動けなくなった\nターン: {g['turn']}")
+        del games[ctx.author.id]
+        return
+
+    await ctx.send(f"☢️ 危険度: {g['danger']}% / ターン: {g['turn']}")
 
 # =========================
 bot.run(os.environ["TOKEN"])
