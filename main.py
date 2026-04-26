@@ -240,7 +240,7 @@ async def action(ctx, act):
 
     # 💥 ゲームオーバー
     if g["danger"] >= 100:
-        await ctx.send(f"💥 目が白く濁り、まともに動けなくなった\nターン: {g['turn']}")
+        await ctx.send(f"💥 助手がドライバーを落とした瞬間、眩い青い光に包まれ致死量の放射能を浴びた\nターン: {g['turn']}")
         del games[ctx.author.id]
         return
 
