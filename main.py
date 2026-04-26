@@ -205,9 +205,9 @@ class CoreView(discord.ui.View):
             return "ゲーム終了"
 
         if g["danger"] > 70:
-            state = "😨 やばい"
+            state = "😨 やばない？"
         elif g["danger"] > 40:
-            state = "😐 微妙"
+            state = "もっといけるやん"
         else:
             state = "🙂 安定"
 
@@ -233,7 +233,7 @@ class CoreView(discord.ui.View):
         # 事故
         if random.random() < 0.08:
             await interaction.response.edit_message(
-                content=f"💀 助手がうんこを漏らしてしまって、あなたはその悪臭に耐え切れずしんだ\nターン: {g['turn']}",
+                content=f"💀 あなたは今朝素手でトマトスパゲティを食べたことを忘れて、ドライバーを滑らせ、落とした瞬間、部屋に眩い綺麗な青色と共に致死量の放射能を浴びた\nターン: {g['turn']}",
                 view=None
             )
             del games[self.user.id]
@@ -242,7 +242,7 @@ class CoreView(discord.ui.View):
         # ゲームオーバー
         if g["danger"] >= 100:
             await interaction.response.edit_message(
-                content=f"💥 あなたは今朝素手でトマトスパゲティを食べたことを忘れて、ドライバーを滑らせ、落とした瞬間、部屋に眩い綺麗な青色と共に致死量の放射能を浴び\nターン: {g['turn']}",
+                content=f"💥 あなたはドライバーを間違えて落とした瞬間、部屋に眩い綺麗な青色と共に致死量の放射能を浴びた\nターン: {g['turn']}",
                 view=None
             )
             del games[self.user.id]
@@ -264,11 +264,11 @@ class CoreView(discord.ui.View):
 
     @discord.ui.button(label="安定", style=discord.ButtonStyle.green)
     async def stable(self, interaction, button):
-        await self.process(interaction, -10)
+        await self.process(interaction, -10, 10)
 
     @discord.ui.button(label="観測", style=discord.ButtonStyle.blurple)
     async def observe(self, interaction, button):
-        await self.process(interaction, +15)
+        await self.process(interaction, -5, 5)
 
     @discord.ui.button(label="テスト", style=discord.ButtonStyle.red)
     async def test(self, interaction, button):
@@ -276,7 +276,7 @@ class CoreView(discord.ui.View):
 
     @discord.ui.button(label="冷却", style=discord.ButtonStyle.gray)
     async def cool(self, interaction, button):
-        await self.process(interaction, (-10, 30))  # ←修正
+        await self.process(interaction, (-10, 20))  # ←修正
 
     async def on_timeout(self):
         for item in self.children:
@@ -284,8 +284,5 @@ class CoreView(discord.ui.View):
 
         if self.user.id in games:
             del games[self.user.id]
-
-        if self.message:
-            await self.message.edit(content="⌛ 時間切れで終了", view=self)
 
 bot.run(os.environ["TOKEN"])
