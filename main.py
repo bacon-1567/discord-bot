@@ -216,7 +216,7 @@ async def core(ctx):
         "danger": 0,
         "turn": 0
     }
-    await ctx.send("ばかが死ぬ実験をしたよ！\n危険度: 0%")
+    await ctx.send("日本に落とす第3の核爆弾を作ろう！\n危険度: 0%")
 
 @bot.command()
 async def action(ctx, act):
@@ -225,16 +225,16 @@ async def action(ctx, act):
 
     g = games[ctx.author.id]
 
-    if act == "安定":
+    if act == "ドライバーを固定する":
         g["danger"] = max(0, g["danger"] - 15)
-    elif act == "観測":
+    elif act == "ドライバーを少し動かす":
         g["danger"] += 10
-    elif act == "テスト":
+    elif act == "ドライバーを下に向ける":
         g["danger"] += 25
     elif act == "冷却":
         g["danger"] = max(0, g["danger"] - random.randint(10, 30))
     else:
-        return await ctx.send("コマンド: 安定 / 観測 / テスト / 冷却")
+        return await ctx.send("コマンド: ドライバーを固定する / ドライバーを少し動かす / ドライバーを下に向ける / 冷却")
 
     g["turn"] += 1
 
