@@ -19,7 +19,7 @@ TARGET_ROLE_ID = 1495420804819845301  # ←ロールID
 @bot.event
 async def on_ready():
     print("ログインしました！")
-    await bot.change_presence(activity=discord.Game(name="V1.25"))
+    await bot.change_presence(activity=discord.Game(name="V1.3"))
 
 # =========================
 # 投票View
@@ -121,14 +121,16 @@ class VoteView(discord.ui.View):
 async def on_message(message):
     if message.author.bot:
         return
+    
+    responded = False
 
     # 🔹 ランダム煽り
-    if random.random() < 0.01:
+    if random.random() < 0.005:
         await message.channel.send("陰キャやんｗｗｗｗｗ🫵😂🫵😂🫵😂←陽キャたち")
 
     # 🔹 特定ユーザー
     if message.author.id == 1344954155353243650:
-        if random.random() < 0.1:
+        if random.random() < 0.005:
             responses = [
                 "おまえちんこやんｗｗｗｗ😂😂😂😂",
                 "静かにしろ😡",
@@ -139,19 +141,22 @@ async def on_message(message):
             await message.channel.send(f"{message.author.mention} {random.choice(responses)}")
 
     # 🔹 ワード反応
-    if any(word in message.content for word in ["お、おう","わたあめ","ばこぴょん","ほね"]):
+    if not responded and any(word in message.content for word in ["お、おう","わたあめ","ばこぴょん","ほね"]):
         await message.channel.send(random.choice([
             "お、おう","あ、うん、","なにいってん","は？",
             "https://youtu.be/J5Z7tIq7bco"
         ]))
+        responded = True
 
-    elif any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
+    # ワード反応②
+    elif not responded and any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
         await message.channel.send(random.choice([
-            "どうした","ん？","要件をいえ",
-            "えろ"
+            "えろ","だまれ","ん？","おけ",
+            "なに"
         ]))
+        responded = True
 
-    elif any(word in message.content for word in ["アベル","アテネ","あべる","あてね"]):
+    elif not responded and any(word in message.content for word in  ["アベル","アテネ","あべる","あてね"]):
         await message.channel.send(random.choice([
             "https://www.youtube.com/@ABELLandATENE",
             "https://www.youtube.com/watch?v=zP7qRsknFxs",
@@ -159,6 +164,7 @@ async def on_message(message):
             "https://www.youtube.com/watch?v=8DBRSuzHPxw",
             "https://www.youtube.com/watch?v=I7HuIlFUx44"
         ]))
+        responded = True
 
     # 投票トリガー
     if any(word in message.content for word in ["スカトロ","児ポ","腸内洗浄"]):
@@ -205,9 +211,9 @@ class CoreView(discord.ui.View):
             return "ゲーム終了"
 
         if g["danger"] > 70:
-            state = "😨 やばない？"
+            state = "😨 やばい"
         elif g["danger"] > 40:
-            state = "もっといけるやん"
+            state = "😐 微妙"
         else:
             state = "🙂 安定"
 
@@ -233,7 +239,7 @@ class CoreView(discord.ui.View):
         # 事故
         if random.random() < 0.08:
             await interaction.response.edit_message(
-                content=f"💀 あなたは今朝素手でトマトスパゲティを食べたことを忘れて、ドライバーを滑らせ、落とした瞬間、部屋に眩い綺麗な青色と共に致死量の放射能を浴びた\nターン: {g['turn']}",
+                content=f"💀 助手がうんこを漏らしてしまって、あなたはその悪臭に耐え切れずしんだ\nターン: {g['turn']}",
                 view=None
             )
             del games[self.user.id]
@@ -242,7 +248,7 @@ class CoreView(discord.ui.View):
         # ゲームオーバー
         if g["danger"] >= 100:
             await interaction.response.edit_message(
-                content=f"💥 あなたはドライバーを間違えて落とした瞬間、部屋に眩い綺麗な青色と共に致死量の放射能を浴びた\nターン: {g['turn']}",
+                content=f"💥 あなたは今朝素手でトマトスパゲティを食べたことを忘れて、ドライバーを滑らせ、落とした瞬間、部屋に眩い綺麗な青色と共に致死量の放射能を浴び\nターン: {g['turn']}",
                 view=None
             )
             del games[self.user.id]
@@ -264,11 +270,11 @@ class CoreView(discord.ui.View):
 
     @discord.ui.button(label="安定", style=discord.ButtonStyle.green)
     async def stable(self, interaction, button):
-        await self.process(interaction, (-10, 10))
+        await self.process(interaction, -10)
 
     @discord.ui.button(label="観測", style=discord.ButtonStyle.blurple)
     async def observe(self, interaction, button):
-        await self.process(interaction, (-5, 5))
+        await self.process(interaction, +15)
 
     @discord.ui.button(label="テスト", style=discord.ButtonStyle.red)
     async def test(self, interaction, button):
@@ -276,7 +282,7 @@ class CoreView(discord.ui.View):
 
     @discord.ui.button(label="冷却", style=discord.ButtonStyle.gray)
     async def cool(self, interaction, button):
-        await self.process(interaction, (-10, 20))  # ←修正
+        await self.process(interaction, (-10, 30))  # ←修正
 
     async def on_timeout(self):
         for item in self.children:
@@ -284,5 +290,8 @@ class CoreView(discord.ui.View):
 
         if self.user.id in games:
             del games[self.user.id]
+
+        if self.message:
+            await self.message.edit(content="⌛ 時間切れで終了", view=self)
 
 bot.run(os.environ["TOKEN"])
