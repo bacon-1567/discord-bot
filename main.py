@@ -11,7 +11,7 @@ intents.presences = True    # ←これないとSpotify無理
 bot = commands.Bot(command_prefix='!', intents=intents)
 bot.remove_command("help")
 
-TARGET_ROLE_ID = 1495420804819845301  # ←ロールID
+TARGET_ROLE_ID = 1499670270779068497  # ←ロールID
 
 # =========================
 # 起動
