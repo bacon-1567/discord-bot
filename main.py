@@ -148,15 +148,14 @@ async def on_message(message):
         ]))
         responded = True
 
-    # ワード反応②
-    elif not responded and any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
+    if not responded and any(word in message.content for word in ["ばこん","バコン","997951321237893130"]):
         await message.channel.send(random.choice([
             "えろ","だまれ","ん？","おけ",
             "なに"
         ]))
         responded = True
 
-    elif not responded and any(word in message.content for word in  ["アベル","アテネ","あべる","あてね"]):
+    if not responded and any(word in message.content for word in  ["アベル","アテネ","あべる","あてね"]):
         await message.channel.send(random.choice([
             "https://www.youtube.com/@ABELLandATENE",
             "https://www.youtube.com/watch?v=zP7qRsknFxs",
@@ -283,13 +282,6 @@ class CoreView(discord.ui.View):
     @discord.ui.button(label="冷却", style=discord.ButtonStyle.gray)
     async def cool(self, interaction, button):
         await self.process(interaction, (-10, 30))  # ←修正
-
-    async def on_timeout(self):
-        for item in self.children:
-            item.disabled = True
-
-        if self.user.id in games:
-            del games[self.user.id]
 
         if self.message:
             await self.message.edit(content="⌛ 時間切れで終了", view=self)
